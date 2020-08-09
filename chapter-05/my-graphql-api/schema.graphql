@@ -1,0 +1,60 @@
+# schema 文件
+
+# 定义了允许客户端执行的查询操作 已经 数据之间的关联
+# 主要是用来描述数据需求
+
+# 自定义对象 类型
+type Photo {
+    id: ID!
+    url: String!
+    name: String! 
+    description: String
+    category: PhotoCategory!
+    postedBy: User!
+    taggedUsers: [User!]!
+}
+
+type User {
+    name: String!
+    githubLogin: ID!
+    avatar: String
+    postedPhotos: [Photo!]!
+    inPhotos: [Photo!]!
+}
+
+type AuthPayload {
+    token: String!
+    user: User!
+}
+
+
+# 输入类型 + 枚举类型 来保证请求参数的合法性
+# 枚举类型
+enum PhotoCategory {
+    SELFIE
+    PORTRAIT
+    ACTION
+    LANDSCAPE
+    GRAPHIC
+}
+# 输入类型
+input PostPhotoInput {
+    name: String!
+    description: String
+    category: PhotoCategory = PORTRAIT
+}
+
+# 根查询
+type Query {
+    totalPhotos: Int!
+    allPhotos: [Photo!]!
+    totalUsers: Int!
+    allUsers: [User!]!
+    me: User
+}
+# 根变更
+type Mutation {
+    postPhoto(input: PostPhotoInput!): Photo!
+    githubAuth(code: String!): AuthPayload!
+    addFakeUsers(count: Int=1): [User!]!
+}

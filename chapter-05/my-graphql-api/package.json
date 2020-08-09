@@ -1,0 +1,31 @@
+{
+  "name": "my-graphql-api",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon -e js,json,graphql"
+  },
+  "keywords": [],
+  "author": "duxin <duxin@kuaishou.com>",
+  "license": "ISC",
+  "dependencies": {
+    "apollo-server": "^2.15.1",
+    "apollo-server-koa": "^2.16.0",
+    "dotenv": "^8.2.0",
+    "graphql": "^15.3.0",
+    "graphql-playground-middleware-koa": "^1.6.17",
+    "koa": "^2.13.0",
+    "koa-router": "^9.1.0",
+    "mongodb": "^3.6.0",
+    "node-fetch": "^2.6.0",
+    "nodemon": "^2.0.4"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "node_modules/*"
+    ],
+    "ext": "js,json,graphql",
+    "delay": "2500"
+  }
+}

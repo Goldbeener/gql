@@ -1,0 +1,130 @@
+
+"""
+graphql schema demo
+"""
+" 单行注释 "
+# 自定义标量 类型
+scalar DateTime
+
+# 自定义标量 枚举类型
+enum PhotoCategory {
+    SELFIE
+    PORTRAIT
+    ACTION
+    LANDSCAPE
+    GRAPHIC
+}
+enum SortDirection {
+    ASCENDING
+    DESCENDING
+}
+enum SortablePhotoField {
+    name
+    description
+    category
+    created
+}
+
+# 自定义对象类型
+type User {
+    githubLogin: ID!
+    name: String
+    avatar: String
+    postedPhotos: [Photo!]!
+    inPhotos: [Photo!]!
+    friends: [FriendsShip!]!
+}
+
+type Photo {
+    id: id: ID!
+    name: String!
+    url: String!
+    description: String
+    created: DateTime!
+    category: PhotoCategory!
+    postedBy: User!
+    taggedUsers: [User!]!
+}
+
+type FriendsShip {
+    friends: [User!]!
+    # friend_a: User!
+    # friend_b: User!
+    howLong: Int!
+    whereWeMeet: Location!
+}
+
+# 输入类型 用于复杂的对象类型
+input PostPhotoInput {
+    name: String!
+    description: String
+    category: PhotoCategory = PORTRAIT
+}
+input PhotoFilter {
+    category: PhotoCategory
+    createdBetween: DateRange
+    taggedUsers: [ID!]
+    searchText: String
+}
+input DateRange {
+    start: DateTime!
+    end: DateTime!
+}
+input DataPage {
+    first: Int = 25
+    start: Int = 0
+}
+input DataSort {
+    sort: SortDirection = DESCENDING
+    sortBy: SortablePhotoField = created
+}
+
+# 查询 definition
+query getPhotos($filter: PhotoFilter $page: DataPage $sort: DataSort) {
+    allPhotos(filter: $filter page: $page sort: $sort) {
+        id
+        name
+        url
+    }
+}
+
+# 变更definition
+mutation newPhoto($input: PostPhotoInput) {
+    postPhoto(input: $input) {
+        id
+        url
+        created
+    }
+}
+
+# 根查询
+type Query {
+    totalPhotos: Int!
+    allPhotos(
+        first: Int = 25 
+        start: Int = 0 
+        category: PhotoCategory
+        sort: SortDirection = DESCENDING
+        sortBy: SortablePhotoField = created
+    ): [Photo!]!
+    totalUsers: Int!
+    allUsers(first: Int = 50 start: Int = 0): [User!]!
+    User(githubLogin: ID!): User!
+    Photo(id: ID!): Photo!
+}
+# 根变更
+type Mutation {
+    postPhoto (input: PostPhotoInput): Photo!
+}
+
+# 订阅
+type Subscription {
+    newPhoto(category: PhotoCategory): Photo!
+    newUser: User!
+}
+
+schema {
+    query: Query
+    mutation: Mutation
+    subscription: Subscription
+}
